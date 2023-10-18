@@ -3,18 +3,26 @@ import "./style.css";
 const app: HTMLDivElement = document.querySelector("#app")!;
 const drawingChanged = new CustomEvent("drawing-changed");
 //GAME SETUP/////////////////////////////////////
-const gameName = "Kayla's Sketch Pad";
+const gameName = "Doodle It";
 document.title = gameName;
 const header = document.createElement("h1");
+header.id = "game-name";
 header.innerHTML = gameName;
 app.append(header);
-
+type ClickHandler = () => void;
 const cursor = { active: false, x: 0, y: 0 };
 let drawing: { x: number; y: number }[][] = [];
 let currentDrawing: { x: number; y: number }[] | null = [];
-
+let redoDrawing: { x: number; y: number }[][] = [];
 
 //////////////////////////////////////////////
+
+///////////BUTTONS//////////////////
+addButton("clear", eraseCanvas);
+addButton("undo", undoCanvas);
+addButton("redo", redoCanvas);
+app.append(document.createElement("br"));
+///////////////////////////////////
 
 ///BUILD CANVAS/////////////////
 const canvas = document.createElement("canvas");
@@ -22,15 +30,12 @@ canvas.id = "canvas";
 canvas.width = 256;
 canvas.height = 256;
 app.append(canvas);
-//////////////////////////////////////////////
-
 const ctx = canvas.getContext("2d")!;
 ctx.fillStyle = "white";
 ctx.fillRect(0, 0, 256, 256);
-
 addCanvasEvents();
-
-addClearButton();
+app.append(document.createElement("br"));
+//////////////////////////////////////////////
 
 
 ///////DRAWING///////////////////
@@ -53,6 +58,7 @@ function addCanvasEvents() {
         cursor.x = event.offsetX;
         cursor.y = event.offsetY;
         currentDrawing!.push({ x: cursor.x, y: cursor.y });
+        redoDrawing = [];
 
         canvas.dispatchEvent(drawingChanged);
     });
@@ -69,18 +75,11 @@ function addCanvasEvents() {
 //////////////////////////////////////////////
 
 //CLEAR BUTTON/////////////////
-function addClearButton() {
-    //Add clear button
-    const clearButton = document.createElement("button");
-    clearButton.innerHTML = "clear";
-    app.append(document.createElement("br"));
-    app.append(clearButton);
+function eraseCanvas() {
+    redoDrawing = drawing;
+    drawing = [];
+    clearCanvas();
 
-    //Add click functionality
-    clearButton.addEventListener("click", () => {
-        clearCanvas();
-        drawing = [];
-    });
 }
 
 function clearCanvas() {
@@ -109,3 +108,40 @@ function drawIT() {
     }
 }
 //////////////////////////////////////////////
+
+//////undo///////////////////////////////////
+function undoCanvas() {
+    if (drawing.length == 0) {
+        return;
+    }
+    redoDrawing.push(drawing.pop()!);
+    canvas.dispatchEvent(drawingChanged);
+}
+///////////////////////////////////////////////
+
+///////////////redo///////////////////////////
+function redoCanvas() {
+    if (redoDrawing.length == 0) {
+        return;
+    }
+    drawing.push(redoDrawing.pop()!);
+    canvas.dispatchEvent(drawingChanged);
+}
+
+///////////////////////////////////////////////
+
+///////CLICKING ABLILITY//////////////////////
+function addButton(name: string, funct: ClickHandler) {
+    const button = document.createElement("button");
+    button.innerHTML = name;
+    app.append(button);
+
+    //click
+    button.addEventListener("click", () => {
+        funct();
+    });
+
+
+
+}
+//////////////////////////////////////////////////
