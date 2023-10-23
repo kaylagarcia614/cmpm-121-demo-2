@@ -45,13 +45,11 @@ export class CursorCommand {
     }
 
     display(ctx: CanvasRenderingContext2D) {
-        //16-64 from 1-11
         const outMin = 16;
-        const outMax = 64;
+        const outMax = 16;
         const inMin = 1;
-        const inMax = 11;
+        const inMax = 5;
         const newSize: number =
-            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
             ((ctx.lineWidth - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
         const xOffset = (4 * newSize) / outMin;
         const yOffset = (8 * newSize) / outMin;
