@@ -48,11 +48,11 @@ export class Stickers {
         this.text = text;
 
         const outMin = 16;
-        const outMax = 64;
-        const inMin = 1;
-        const inMax = 11;
+        const outMax = 16;
+        const inMinimun = 1;
+        const inMaximum = 5;
         const newSize: number =
-            ((parseInt(size) - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+            ((parseInt(size) - inMinimun) * (outMax - outMin)) / (inMaximum - inMinimun) + outMin;
         this.xOffset = (4 * newSize) / outMin;
         this.yOffset = (8 * newSize) / outMin;
         this.size = newSize;
@@ -91,15 +91,15 @@ export class CursorCommand {
         const lineWidthBefore = ctx.lineWidth;
         const outMin = 16;
         const outMax = 16;
-        const inMin = 1;
-        const inMax = 5;
-        const newSize: number = ((ctx.lineWidth - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+        const inMinimun = 1;
+        const inMaximum = 5;
+        const newSize: number = ((ctx.lineWidth - inMinimun) * (outMax - outMin)) / (inMaximum - inMinimun) + outMin;
         const xOffset = (4 * newSize) / outMin;
         const yOffset = (8 * newSize) / outMin;
         const fontBefore = ctx.font;
-        ctx.font = newSize + "px monospace";
+        ctx.font = newSize + "px Arial";
         ctx.fillStyle = "black";
-        ctx.fillText("o", this.x - xOffset, this.y + yOffset);
+        ctx.fillText(".", this.x - xOffset, this.y + yOffset);
         ctx.fillText(this.text, this.x - xOffset, this.y + yOffset);
         ctx.lineWidth = lineWidthBefore;
         ctx.font = fontBefore;

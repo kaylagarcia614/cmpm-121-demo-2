@@ -16,7 +16,7 @@ const cursorChanged = new CustomEvent("cursor-changed");
 let strokes: (Line | Stickers)[] = [];
 let thisStroke: (Line | Stickers) | null = null;
 let redoStroke: (Line | Stickers)[] = [];
-let currentCursor = "o";
+let currentCursor = ".";
 let cursorCommand: CursorCommand | null = null;
 //////////////////////////////////////////////
 
@@ -59,7 +59,7 @@ function addCanvasEvents() {
         cursor.active = true;
         cursor.x = event.offsetX;
         cursor.y = event.offsetY;
-        if (currentCursor == "o") {
+        if (currentCursor == ".") {
             thisStroke = new Line(thickSlider.value);
         } else {
             thisStroke = new Stickers(
@@ -221,7 +221,7 @@ function addEmojiButton(text: string) {
     button.addEventListener("click", () => {
         currentCursor = text;
         if (text == "clear emoji") {
-            currentCursor = "o";
+            currentCursor = ".";
         }
         canvas.dispatchEvent(cursorChanged);
     });
