@@ -51,6 +51,9 @@ app.append(document.createElement("br"));
 emojis.forEach((text) => {
     addEmojiButton(text);
 });
+
+addEmojiButton("custom emoji"); // Add a button for custom stickers
+app.append(document.createElement("br"));
 //////////////////////////////////////////////
 
 //////////////Drawing////////////////////////
@@ -199,7 +202,7 @@ function addThicknessSlider() {
     });
 
     const label = document.createElement("label");
-    label.textContent = "Thickness: ";
+    label.textContent = "thickness: ";
 
     app.append(label);
     app.append(thickness);
@@ -222,6 +225,13 @@ function addEmojiButton(text: string) {
         currentCursor = text;
         if (text == "clear emoji") {
             currentCursor = ".";
+        } else if (text == "custom emoji") {
+            const customSticker = prompt("enter a new emoji:");
+            if (customSticker) {
+                emojis.push(customSticker);
+                currentCursor = customSticker;
+
+            }
         }
         canvas.dispatchEvent(cursorChanged);
     });
