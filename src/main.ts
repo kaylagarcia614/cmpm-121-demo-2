@@ -280,6 +280,7 @@ function exportPicture() {
 }
 //////////////////////////////////////////////
 
+/////////////////COLOR///////////////////////
 const colorSlider = addSlider(
     "Color",
     "0",
@@ -288,9 +289,10 @@ const colorSlider = addSlider(
     changeColor
 );
 
-
 function changeColor(val: number) {
     newColor = "#" + val.toString(16).padStart(6, "0");
     ctx.fillStyle = newColor;
     drawIT();
 }
+
+//////////////////////////////////////////////
