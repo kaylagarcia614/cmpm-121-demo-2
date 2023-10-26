@@ -11,6 +11,7 @@ header.id = "game-name";
 header.innerHTML = gameName;
 app.append(header);
 type ClickHandler = () => void;
+type SliderHandler = (num: number) => void;
 const cursor = { active: false, x: 0, y: 0 };
 const cursorChanged = new CustomEvent("cursor-changed");
 let strokes: (Line | Stickers)[] = [];
@@ -18,6 +19,7 @@ let thisStroke: (Line | Stickers) | null = null;
 let redoStroke: (Line | Stickers)[] = [];
 let currentCursor = ".";
 let cursorCommand: CursorCommand | null = null;
+let newColor = "#000000";
 //////////////////////////////////////////////
 
 ////////////////Buttons//////////////////////
@@ -44,7 +46,7 @@ canvas.style.cursor = "none";
 //////////////////////////////////////////////
 
 app.append(document.createElement("br"));
-const thickSlider = addThicknessSlider();
+const thickSlider = addSlider("Thickness", "1", "11", "1", changeThickness);
 
 /////////////////Stickers/////////////////////
 const emojis = ["🐟", "⚽️", "🧸", "⭐️", "clear emoji"];
@@ -64,13 +66,14 @@ function addCanvasEvents() {
         cursor.x = event.offsetX;
         cursor.y = event.offsetY;
         if (currentCursor == ".") {
-            thisStroke = new Line(thickSlider.value);
+            thisStroke = new Line(thickSlider.value, newColor);
         } else {
             thisStroke = new Stickers(
                 cursor.x,
                 cursor.y,
                 currentCursor,
-                thickSlider.value
+                thickSlider.value,
+                newColor
             );
         }
 
@@ -114,12 +117,21 @@ canvas.addEventListener("mouseout", () => {
 });
 
 canvas.addEventListener("mouseenter", (e) => {
-    cursorCommand = new CursorCommand(e.offsetX, e.offsetY, currentCursor);
-    canvas.dispatchEvent(cursorChanged);
+    cursorCommand = new CursorCommand(
+        e.offsetX,
+        e.offsetY,
+        currentCursor,
+        newColor
+    );
 });
 
 canvas.addEventListener("mousemove", (e) => {
-    cursorCommand = new CursorCommand(e.offsetX, e.offsetY, currentCursor);
+    cursorCommand = new CursorCommand(
+        e.offsetX,
+        e.offsetY,
+        currentCursor,
+        colorSlider.value
+    );
     canvas.dispatchEvent(cursorChanged);
 });
 
@@ -191,27 +203,33 @@ function addButton(text: string, funct: ClickHandler) {
 //////////////////////////////////////////////
 
 /////////////////THICKNESS SLIDER/////////////
-function addThicknessSlider() {
-    const thickness = document.createElement("input");
-    thickness.type = "range";
-    thickness.min = "1";
-    thickness.max = "5";
-    thickness.value = "1";
+function addSlider(
+    name: string,
+    min: string,
+    max: string,
+    initial: string,
+    func: SliderHandler
+) {
+    const slider = document.createElement("input");
+    slider.type = "range";
+    slider.min = min;
+    slider.max = max;
+    slider.value = initial;
 
-    thickness.addEventListener("input", () => {
-        changeThickness(parseInt(thickness.value));
+    slider.addEventListener("input", () => {
+        func(parseInt(slider.value));
     });
 
     const label = document.createElement("label");
-    label.textContent = "thickness: ";
+    label.textContent = name + ": ";
 
     app.append(label);
-    app.append(thickness);
-    return thickness;
+    app.append(slider);
+    return slider;
 }
 
-function changeThickness(value: number) {
-    ctx.lineWidth = value;
+function changeThickness(val: number) {
+    ctx.lineWidth = val;
     drawIT();
 }
 //////////////////////////////////////////////
@@ -261,3 +279,18 @@ function exportPicture() {
     anchor.click();
 }
 //////////////////////////////////////////////
+
+const colorSlider = addSlider(
+    "Color",
+    "0",
+    0xffffff + "",
+    0x000000 + "",
+    changeColor
+);
+
+
+function changeColor(val: number) {
+    newColor = "#" + val.toString(16).padStart(6, "0");
+    ctx.fillStyle = newColor;
+    drawIT();
+}
