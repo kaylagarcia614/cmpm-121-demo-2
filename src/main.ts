@@ -25,7 +25,8 @@ addButton("clear", eraseCanvas);
 addButton("undo", undoCanvas);
 addButton("redo", redoCanvas);
 app.append(document.createElement("br"));
-
+addButton("Export", exportPicture);
+app.append(document.createElement("br"));
 //////////////////////////////////////////////
 
 /////////////Build Canvas////////////////////
@@ -235,5 +236,28 @@ function addEmojiButton(text: string) {
         }
         canvas.dispatchEvent(cursorChanged);
     });
+}
+//////////////////////////////////////////////
+
+////////////////////EXPORT///////////////////
+function exportPicture() {
+    const hdCanvas = document.createElement("canvas");
+    hdCanvas.width = canvas.width * 4;
+    hdCanvas.height = canvas.height * 4;
+
+    const hdCtx = hdCanvas.getContext("2d")!;
+    hdCtx.fillStyle = "white";
+
+    hdCtx.scale(4, 4);
+    hdCtx.fillRect(0, 0, 256, 256);
+
+    strokes.forEach((stroke) => {
+        stroke.display(hdCtx);
+    });
+
+    const anchor = document.createElement("a");
+    anchor.href = hdCanvas.toDataURL("image/png");
+    anchor.download = "doodle.png";
+    anchor.click();
 }
 //////////////////////////////////////////////
